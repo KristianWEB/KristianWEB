@@ -152,7 +152,7 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
     <div>
       <div class="eyebrow">Meta lead gen for European dental clinics</div>
       <h1 style="margin-top:6px">Dental Ads Unit Economics</h1>
-      <p class="lede">What the offer is worth to the clinic and to us, one clinic at a time and at scale. The clinic pays Meta directly. We run the ads and the funnel, they book and treat, we get paid on the result. Every number on this page comes from the sliders. The presets are planning assumptions, not measured results. The first two pilots replace them.</p>
+      <p class="lede">What the offer is worth to the clinic and to us, one clinic at a time and at scale. The clinic pays Meta directly. We run the ads and the funnel, they book and treat, we get paid on the result. Every number on this page comes from the sliders. The presets are planning assumptions, not measured results. The Clinica Duchev preset uses what their site publishes. The first two pilots replace the rest.</p>
     </div>
     <div>
       <div class="eyebrow" style="margin-bottom:6px">Scenario</div>
@@ -160,6 +160,7 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
         <button type="button" id="sc-conservative" data-sc="conservative">Conservative</button>
         <button type="button" id="sc-base" data-sc="base">Base</button>
         <button type="button" id="sc-aggressive" data-sc="aggressive">Aggressive</button>
+        <button type="button" id="sc-duchev" data-sc="duchev">Clinica Duchev</button>
         <button type="button" id="sc-custom" data-sc="custom" disabled>Custom</button>
       </div>
     </div>
@@ -229,8 +230,36 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
 
       <section class="card">
         <h2>Scenarios side by side</h2>
-        <p class="sub">The three presets under the current fee sliders. Changing the fee updates all three.</p>
+        <p class="sub">The three presets plus the Clinica Duchev case, all under the current fee sliders. Changing the fee updates every column.</p>
         <div class="tw"><table id="compare"></table></div>
+      </section>
+
+      <section class="card" id="duchev">
+        <h2>The first clinic: Clinica Duchev, Sofia</h2>
+        <p class="sub">What their own site and the press say, and what it changes in the model. The Clinica Duchev preset in the scenario switcher loads the numbers below. Prices are in euros at the fixed 1.95583 lev rate.</p>
+        <div class="twins" id="duchev-tiles"></div>
+        <div class="prose" style="margin-top:18px">
+          <p><strong>Who they are.</strong> Dental Clinic Petar Duchev, Mladost IV in Sofia, a 1,100 square metre building opened in 2021 with separate adult, paediatric and hygiene units and an operating theatre for sedation. Founder Dr Petar Duchev, Nobel Biocare lecturer, X-Guide navigated implant surgery, All-on-4 same-day arches, veneers by a visiting Italian ceramist, braces, general anaesthesia for adults and children. They say it out loud: premium segment, premium mark-up. Google sits at 4.6 stars on about 116 reviews. Reported 2021 turnover around 1.25 million euros.</p>
+          <p><strong>What a first visit costs.</strong> This is the part that matters for the model. An adult cannot get treated without a 3D scan the day before (400 lev, 204.52 euros) and a 60 to 90 minute consultation with Dr Duchev himself (300 lev, 153.39 euros). That is <strong>357.91 euros before anyone talks about an implant</strong>. Add the recommended hygiene visit at 245.42 euros and the diagnostic pathway at 255.65 and a total rehab candidate has paid around 860 euros before treatment starts. Only "just asking" at reception is free, and it usually needs a current X-ray anyway. So the 200 euro floor is right in spirit and low in number. The preset uses 358.</p>
+          <p><strong>What they charge for treatment.</strong> Nothing is published. The price list is handed over at the treatment plan presentation. The ranges below are inferred from Sofia premium clinics that do publish, with the 358 euro diagnostics added. Replace them with their internal list the day they sign.</p>
+          <div class="tw"><table>
+            <thead><tr><th>Case</th><th class="num">Low</th><th class="num">Mid</th><th class="num">High</th><th>Arithmetic</th></tr></thead>
+            <tbody>
+              <tr><td>One implant, abutment and crown</td><td class="num">2,600</td><td class="num">3,600</td><td class="num">4,600</td><td>implant 1,500 to 2,500 plus crown 750 to 1,700 plus diagnostics</td></tr>
+              <tr><td>Two implants with crowns</td><td class="num">4,900</td><td class="num">6,900</td><td class="num">9,000</td><td>two of the above, one diagnostic pathway</td></tr>
+              <tr><td>All-on-4, one arch</td><td class="num">8,400</td><td class="num">12,400</td><td class="num">17,400</td><td>Nobel components, anaesthesia, provisional bridge, plus diagnostics</td></tr>
+              <tr><td>All-on-4, both arches</td><td class="num">15,400</td><td class="num">23,400</td><td class="num">33,400</td><td>two arches, shared diagnostics</td></tr>
+              <tr><td>8 to 10 veneers</td><td class="num">6,400</td><td class="num">10,400</td><td class="num">15,400</td><td>750 to 1,500 a tooth plus diagnostics</td></tr>
+              <tr><td>Sedation add-on</td><td class="num">300</td><td class="num">600</td><td class="num">1,000</td><td>per session</td></tr>
+            </tbody>
+          </table></div>
+          <p>A blended case value of 5,000 to 7,000 euros is the honest mid for an implant-led campaign here. The preset uses 5,500. If the mix leans All-on-4 it goes past 10,000 and the commission conversation changes completely.</p>
+          <p><strong>What the paid consult does to the funnel.</strong> A cold Meta lead who learns the first visit costs 358 euros books far less often than one offered a free consult, so the preset drops lead to booked to 22%. In return, people who have already paid for a scan the day before show up, so show rate goes to 80%, and they are pre-qualified on money, so case acceptance sits at 35%. Fewer, better patients. It also means the instant form on its own will disappoint. This clinic needs the landing page variant: explain the diagnostic pathway and its price up front, book the scan online, fire the custom conversion on the booking. The lead form is the top of that funnel, not the whole thing.</p>
+          <p><strong>Capacity is the real ceiling.</strong> Every adult consultation is done by Dr Duchev personally, 60 to 90 minutes each, Monday to Friday nine to five. That is somewhere between 10 and 20 new consults a week at the very most, before his surgery days. The tile above shows how many consults a week the current sliders send him. Past 8 to 10 a week we should stop scaling spend and start talking about a second consulting dentist, otherwise booking lead times stretch and show rate falls.</p>
+          <p><strong>They are not running ads today.</strong> The Meta Ad Library shows three ads in the page's history, all for the children's clinic, the last two in December 2025 offering free children's consultations. Zero adult, implant or veneer ads ever. The site was last updated in 2020, has a Meta pixel, Google tag manager and a Google Ads conversion tag, and takes bookings by phone or a contact form. No online booking, no WhatsApp, no landing pages, no financing, no offers for adults. The Bulgarian and English pages even disagree on the hygiene price (330 versus 480 lev). All of that is work we do in the setup phase and it is why the setup fee is not optional here.</p>
+          <p><strong>What to change in the contract for them.</strong> Total rehab cases run over months and complex ones over one to two years, so a 180 day attribution window undersells us. Ask for twelve months on the lead date, commission on payments as they are collected. Reconciliation is easy because one man does every adult consult: the lead sheet against his diary once a month. And since the diagnostics are paid, agree that the 358 euros count as revenue for the commission. It is real money the clinic did not have.</p>
+          <p class="foot">Found on the clinic's own pages (for-you, dental-care-office, why-us, history, contacts), Forbes Bulgaria May 2021, profit.bg January 2024, biss.bg July 2024, and the Meta Ad Library. Chair count in Mladost, treatment prices and the 2021 turnover figure are not confirmed by the clinic. Google rating via an aggregator, not Maps directly.</p>
+        </div>
       </section>
 
       <section class="card">
@@ -301,7 +330,7 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
             <tr><td>Show rate</td><td class="num">60%</td><td class="num">62%</td><td class="num">65%</td><td>Free consults no-show a lot. Reminders and a small refundable deposit lift this toward 75%.</td></tr>
             <tr><td>Consult to accepted treatment</td><td class="num">30%</td><td class="num">32%</td><td class="num">35%</td><td>Case acceptance on cold paid leads for implants runs 25 to 40%. Clinics with in-house financing sit at the top.</td></tr>
             <tr><td>Average treatment value</td><td class="num">3,500</td><td class="num">4,000</td><td class="num">4,500</td><td>Single implant with crown 1,500 to 3,500 in Western Europe, many patients need two or more. All-on-4 from 8,000. Invisalign 3,000 to 6,000. Veneers 600 to 1,200 a tooth.</td></tr>
-            <tr><td>Charged at the first visit</td><td class="num">150</td><td class="num">200</td><td class="num">200</td><td>Partner's read on Clinica Duchev: nobody leaves without paying around 200 euros for the consult, imaging and cleaning. Conservative case discounts it for clinics that run free consults.</td></tr>
+            <tr><td>Charged at the first visit</td><td class="num">150</td><td class="num">200</td><td class="num">200</td><td>Partner's read was around 200 euros. Clinica Duchev's own page puts the adult minimum at 358 (scan plus consultation). The presets stay lower because most clinics in Europe run free or cheap consults. The Duchev preset uses 358.</td></tr>
             <tr><td>Clinic gross margin</td><td class="num">50%</td><td class="num">52%</td><td class="num">55%</td><td>After lab, implant components, materials and clinician time. Owner-operators run higher.</td></tr>
             <tr><td>Revenue we can prove</td><td class="num">75%</td><td class="num">85%</td><td class="num">90%</td><td>Some patients book by phone without the form, some the clinic will argue about. This is the share the commission actually gets paid on.</td></tr>
             <tr><td>Clinics per Sofia hire</td><td class="num">6</td><td class="num">8</td><td class="num">10</td><td>Templated creative and reporting push this up. Setter work pushes it down.</td></tr>
@@ -361,6 +390,7 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
     conservative:{spend:2000,cpl:45,book:.35,show:.60,close:.30,aov:3500,minVisit:150,margin:.50,attr:.75, cap:6,varCost:250,cac:1200,churn:.12,newPerMo:1.5},
     base:        {spend:3000,cpl:35,book:.38,show:.62,close:.32,aov:4000,minVisit:200,margin:.52,attr:.85, cap:8,varCost:200,cac:800,churn:.08,newPerMo:2.5},
     aggressive:  {spend:3500,cpl:30,book:.40,show:.65,close:.35,aov:4500,minVisit:200,margin:.55,attr:.90, cap:10,varCost:150,cac:500,churn:.05,newPerMo:4},
+    duchev:      {spend:2500,cpl:30,book:.22,show:.80,close:.35,aov:5500,minVisit:358,margin:.55,attr:.85, cap:8,varCost:200,cac:800,churn:.08,newPerMo:2.5},
   };
   const FEE_DEFAULTS = {setup:500, retainer:750, perLead:0, perShow:0, comm:0.10, salary:2600, fixed:450};
 
@@ -653,12 +683,12 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
   }
 
   function renderCompare(){
-    const cols = ['conservative','base','aggressive'];
+    const cols = ['conservative','base','aggressive','duchev'];
     const ms = cols.map(k => calc(Object.assign({}, P, PRESETS[k])));
     const pr = cols.map(k => project(Object.assign({}, P, PRESETS[k]), calc(Object.assign({}, P, PRESETS[k]))));
     const row = (label, f, cls) => `<tr><td>${label}</td>${ms.map((m,i)=>`<td class="num">${f(m, PRESETS[cols[i]], pr[i])}</td>`).join('')}</tr>`;
     document.getElementById('compare').innerHTML = `
-      <thead><tr><th>Per clinic, per month</th><th class="num">Conservative</th><th class="num">Base</th><th class="num">Aggressive</th></tr></thead>
+      <thead><tr><th>Per clinic, per month</th><th class="num">Conservative</th><th class="num">Base</th><th class="num">Aggressive</th><th class="num">Clinica Duchev</th></tr></thead>
       <tbody>
         ${row('Ad spend', (m,p)=>eur(p.spend))}
         ${row('Cost per lead', (m,p)=>eur(p.cpl))}
@@ -700,6 +730,16 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
       </ul>`;
   }
 
+  function renderDuchev(m){
+    const perWeek = m.shows/4.33;
+    const cls = perWeek>10 ? 'bad' : perWeek>8 ? 'tight' : 'good';
+    const capLabel = perWeek>10 ? 'Over his consult capacity' : perWeek>8 ? 'Near the ceiling' : 'Fits his diary';
+    document.getElementById('duchev-tiles').innerHTML = `
+      <div class="mini"><div class="l">Paid before any treatment, adult first visit</div><div class="v">€358</div><div class="d">3D scan €204.52 plus consultation €153.39, from the clinic's own page</div></div>
+      <div class="mini"><div class="l">Consults a week this sends to Dr Duchev</div><div class="v">${num1(perWeek)}</div><div class="d">${pill({cls, label:capLabel})} he does every adult consult himself, 60 to 90 minutes each</div></div>
+      <div class="mini"><div class="l">First-visit revenue from our leads</div><div class="v">${eur(m.shows*P.minVisit)}/mo</div><div class="d">${num1(m.shows)} shows at ${eur(P.minVisit)}, before a single case is accepted</div></div>`;
+  }
+
   function render(){
     syncControls();
     const m = calc(P);
@@ -707,7 +747,7 @@ summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
     renderKpis(m); renderFunnel(m); renderSplit(m); renderUnit(m); renderAgency(m, rows);
     columnChart(document.getElementById('c-clinics'), rows);
     lineChart(document.getElementById('c-profit'), rows);
-    renderHeat(m); renderStructures(m); renderCompare(); renderReco();
+    renderHeat(m); renderStructures(m); renderCompare(); renderReco(); renderDuchev(m);
   }
 
   buildControls();
