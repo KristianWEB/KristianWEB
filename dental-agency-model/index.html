@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dental Ads Unit Economics</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f5f8; --surface:#ffffff; --surface-2:#eaeef3; --ink:#141a22; --ink-2:#4a5566; --muted:#7c8696;
+  --line:#dfe4ea; --line-2:#c9d1db;
+  --accent:#2a78d6; --accent-ink:#ffffff; --accent-soft:#e3eefb;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --gray:#c9cbc4;
+  --good:#0ca30c; --good-text:#006300; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  --grid:#e1e0d9; --axis:#c3c2b7;
+  --q100:#cde2fb; --q200:#9ec5f4; --q250:#86b6ef; --q300:#6da7ec; --q350:#5598e7; --q400:#3987e5; --q450:#2a78d6; --q500:#256abf; --q550:#1c5cab; --q600:#184f95; --q700:#0d366b;
+  --shadow:0 1px 2px rgba(20,26,34,.06), 0 8px 24px -16px rgba(20,26,34,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0e1116; --surface:#161b22; --surface-2:#1d242d; --ink:#f1f4f8; --ink-2:#b7c0cb; --muted:#8a94a2;
+    --line:#28303b; --line-2:#354050;
+    --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#182a44;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --gray:#4b5058;
+    --good-text:#0ca30c;
+    --grid:#2c2c2a; --axis:#383835;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1116; --surface:#161b22; --surface-2:#1d242d; --ink:#f1f4f8; --ink-2:#b7c0cb; --muted:#8a94a2;
+  --line:#28303b; --line-2:#354050;
+  --accent:#3987e5; --accent-ink:#ffffff; --accent-soft:#182a44;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --gray:#4b5058;
+  --good-text:#0ca30c;
+  --grid:#2c2c2a; --axis:#383835;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;font-weight:600;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(26px,3.4vw,38px);line-height:1.1}
+h2{font-size:22px;line-height:1.2}
+h3{font-size:16px;line-height:1.3}
+p{margin:0}
+a{color:var(--accent)}
+.app{max-width:1320px;margin:0 auto;padding-block:20px 64px;padding-inline:16px}
+.top{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;justify-content:space-between;padding-block:8px 20px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.top .lede{max-width:62ch;color:var(--ink-2);margin-top:8px}
+.eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{appearance:none;border:0;background:transparent;color:var(--ink-2);font:inherit;font-weight:500;font-size:13.5px;padding:7px 14px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);font-weight:600}
+.seg button:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:920px){.layout{grid-template-columns:1fr}}
+aside.controls{position:sticky;top:env(safe-area-inset-top,0px);max-height:calc(100vh - env(safe-area-inset-top,0px));overflow:auto;padding-right:4px;scrollbar-width:thin}
+@media (max-width:920px){aside.controls{position:static;max-height:none;overflow:visible}}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px 6px;margin-bottom:12px}
+.group h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-family:"Instrument Sans",system-ui,sans-serif;font-weight:600;margin-bottom:6px}
+.ctl{padding-block:9px;border-top:1px solid var(--line)}
+.ctl:first-of-type{border-top:0}
+.ctl .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.ctl label{font-size:13.5px;color:var(--ink-2);line-height:1.3}
+.ctl output{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ctl input[type=range]{width:100%;margin:6px 0 0;accent-color:var(--accent);height:22px}
+.ctl small{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
+main{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:26px}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px 20px}
+section.card > h2{margin-bottom:6px}
+.sub{color:var(--ink-2);max-width:70ch;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;display:flex;flex-direction:column;gap:3px}
+.tile .l{font-size:12.5px;color:var(--muted);line-height:1.3}
+.tile .v{font-size:28px;font-weight:600;line-height:1.1;letter-spacing:-.01em}
+.tile .d{font-size:12.5px;color:var(--ink-2)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.pill.good i{background:var(--good)} .pill.fair i{background:var(--s1)} .pill.tight i{background:var(--warn)} .pill.bad i{background:var(--crit)}
+.verdict{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--surface-2)}
+.verdict strong{font-size:15px}
+.verdict p{color:var(--ink-2);flex:1 1 32ch}
+.funnel{display:grid;gap:10px;margin-top:6px}
+.fr{display:grid;grid-template-columns:150px minmax(0,1fr) 96px;gap:12px;align-items:center}
+@media (max-width:560px){.fr{grid-template-columns:110px minmax(0,1fr) 80px}}
+.fr .n{font-size:13.5px;color:var(--ink-2)}
+.fr .n small{display:block;color:var(--muted);font-size:12px}
+.fr .bar{height:22px;background:var(--surface-2);border-radius:4px;position:relative;overflow:hidden}
+.fr .bar i{position:absolute;inset:0 auto 0 0;border-radius:0 4px 4px 0;min-width:2px}
+.fr .v{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+.fr .v small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.split{margin-top:6px}
+.stack{display:flex;height:34px;border-radius:6px;overflow:hidden;gap:2px;background:var(--surface)}
+.stack div{position:relative;min-width:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap}
+.stack div span{padding:0 6px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.meter{margin-top:18px}
+.meter .track{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--good) 0 20%,var(--s1) 20% 33.3%,var(--warn) 33.3% 50%,var(--crit) 50% 100%);opacity:.9}
+.meter .needle{position:absolute;top:-6px;width:3px;height:22px;background:var(--ink);border-radius:2px;transform:translateX(-50%);box-shadow:0 0 0 2px var(--surface)}
+.meter .ticks{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:8px}
+.meter .ticks span{flex:1}
+.twins{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.mini .l{font-size:12.5px;color:var(--muted)}
+.mini .v{font-size:26px;font-weight:600;line-height:1.15}
+.mini .d{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+.tw{overflow-x:auto;margin-top:8px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.total td{font-weight:600;border-top:2px solid var(--line-2)}
+td .pill{font-size:11.5px;padding:2px 8px}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:8px}
+.chart{border:1px solid var(--line);border-radius:12px;padding:14px 14px 10px;position:relative}
+.chart h3{font-size:14px;margin-bottom:2px}
+.chart .cap{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.chart svg{width:100%;height:auto;display:block}
+.chart svg text{font-family:"Instrument Sans",system-ui,sans-serif;fill:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-110%);opacity:0;transition:opacity .12s}
+.tip b{font-weight:600}
+.tip.on{opacity:1}
+.hm td{text-align:center;padding:0;border:0}
+.hm td div{margin:2px;border-radius:4px;padding:9px 4px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.hm th{text-align:center}
+.hm th.rl{text-align:right}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.prose{max-width:72ch;display:grid;gap:12px;color:var(--ink-2)}
+.prose p strong{color:var(--ink)}
+.prose h3{color:var(--ink);margin-top:8px}
+.prose ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.prose li::marker{color:var(--muted)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 10px 10px 0;color:var(--ink)}
+details{margin-top:12px}
+summary{cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500}
+.foot{color:var(--muted);font-size:12.5px;margin-top:8px;max-width:72ch}
+.neg{color:var(--crit)}
+.pos{color:var(--good-text)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Meta lead gen for European dental clinics</div>
+      <h1 style="margin-top:6px">Dental Ads Unit Economics</h1>
+      <p class="lede">What the offer is worth to the clinic and to us, one clinic at a time and at scale. The clinic pays Meta directly. We run the ads and the funnel, they book and treat, we get paid on the result. Every number on this page comes from the sliders. The presets are planning assumptions, not measured results. The first two pilots replace them.</p>
+    </div>
+    <div>
+      <div class="eyebrow" style="margin-bottom:6px">Scenario</div>
+      <div class="seg" role="group" aria-label="Scenario presets">
+        <button type="button" id="sc-conservative" data-sc="conservative">Conservative</button>
+        <button type="button" id="sc-base" data-sc="base">Base</button>
+        <button type="button" id="sc-aggressive" data-sc="aggressive">Aggressive</button>
+        <button type="button" id="sc-custom" data-sc="custom" disabled>Custom</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="controls" id="controls" aria-label="Model inputs"></aside>
+
+    <main>
+      <section aria-label="Headline numbers">
+        <div class="kpis" id="kpis"></div>
+        <div class="verdict" id="verdict"></div>
+      </section>
+
+      <section class="card">
+        <h2>One clinic, one month</h2>
+        <p class="sub">Leads come from a mix of Meta instant forms and a landing page funnel firing a custom conversion. The clinic's front desk calls them and books the consult. Each step is a slider.</p>
+        <div class="funnel" id="funnel"></div>
+        <p class="foot" id="funnel-note"></p>
+      </section>
+
+      <section class="card">
+        <h2>Where each euro of treatment revenue goes</h2>
+        <p class="sub">The honest picture for the clinic owner. Revenue is accepted treatments plus what every show pays at the first visit. Treatment cost is lab, materials and clinician time. What is left after ads and our fee is their profit on the patients we brought.</p>
+        <div class="split">
+          <div class="stack" id="stack" role="img" aria-label="Revenue split"></div>
+          <div class="legend" id="stack-legend"></div>
+        </div>
+        <div class="meter" aria-label="Fairness meter">
+          <div class="track"><div class="needle" id="needle"></div></div>
+          <div class="ticks"><span>Under 20% of revenue: clinic wins big</span><span style="text-align:center">20 to 33%: fair for both</span><span style="text-align:right">Over 33%: tight, over 50%: no deal</span></div>
+        </div>
+        <div class="twins" id="maxcomm"></div>
+        <p class="foot">Our rule for the pitch: all in, ads plus us, the clinic keeps at least 3 euros of treatment revenue for every euro out. That is a 3x blended ROAS, or marketing at a third of revenue. Under 3x they feel it every month. Under 2x they leave. Over 5x we are underpriced.</p>
+      </section>
+
+      <section class="card">
+        <h2>Does it pay for us?</h2>
+        <p class="sub">Per clinic, after the share of the Sofia seat and the tools it eats. Then the 12-month build with churn and hiring baked in.</p>
+        <div class="tw"><table id="unit"></table></div>
+        <div class="twins" id="agency-tiles"></div>
+        <div class="charts">
+          <div class="chart" id="c-clinics"><h3>Active clinics</h3><div class="cap">Signed minus churned, month by month</div><div class="svgwrap"></div><div class="tip"></div></div>
+          <div class="chart" id="c-profit"><h3>Monthly fee revenue and net profit</h3><div class="cap">Before founder pay. Net is after the Sofia seat(s), tools and the cost of signing clinics.</div><div class="svgwrap"></div><div class="tip"></div></div>
+        </div>
+        <details><summary>Month by month table</summary><div class="tw"><table id="proj"></table></div></details>
+      </section>
+
+      <section class="card">
+        <h2>How much commission can we charge?</h2>
+        <div class="toolbar">
+          <p class="sub" style="margin:0">Commission rate against average treatment value, with the current funnel, retainer and per-lead or per-show fees held as set. Darker is higher.</p>
+          <div class="seg" role="group" aria-label="Heatmap metric">
+            <button type="button" id="hm-roas" data-hm="roas" aria-pressed="true">Clinic blended ROAS</button>
+            <button type="button" id="hm-fee" data-hm="fee" aria-pressed="false">Our fee per clinic</button>
+          </div>
+        </div>
+        <div class="tw"><table class="hm" id="heat"></table></div>
+        <p class="foot" id="heat-note"></p>
+      </section>
+
+      <section class="card">
+        <h2>Fee structures side by side</h2>
+        <p class="sub">Same clinic, same funnel, five ways to bill it. The last row is whatever the fee sliders say right now.</p>
+        <div class="tw"><table id="structures"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>Scenarios side by side</h2>
+        <p class="sub">The three presets under the current fee sliders. Changing the fee updates all three.</p>
+        <div class="tw"><table id="compare"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>What to charge, and how to say it</h2>
+        <div class="prose" id="reco"></div>
+      </section>
+
+      <section class="card">
+        <h2>Deal terms to put in the contract</h2>
+        <div class="prose">
+          <ul>
+            <li><strong>The clinic pays Meta directly</strong> from its own ad account. We get admin access. No media money touches our books, no cash flow risk, no VAT mess on pass-through spend.</li>
+            <li><strong>Minimum ad spend</strong> of 2,000 euros a month for the pilot. Below that the algorithm never gets enough conversions to learn and both sides waste 90 days.</li>
+            <li><strong>Setup fee</strong> covers funnel, creative and CRM build. Charge it. It filters out tire kickers and pays for the Sofia hours before the first lead lands.</li>
+            <li><strong>Commission is on collected revenue</strong> from patients we sourced, not on quotes. Financed cases count when the financing pays out. Matched by phone or email against the lead sheet, reconciled monthly from their practice software.</li>
+            <li><strong>Attribution window</strong> of 180 days from lead date. Implant decisions take time. Six months is fair to both sides.</li>
+            <li><strong>Speed to lead clause.</strong> Leads get a call within 15 minutes in opening hours and two follow-up attempts within 48 hours, or the month bills per lead at an agreed rate instead of on commission. This protects us from a front desk that ignores leads.</li>
+            <li><strong>Retainer as a floor, commission as the upside.</strong> The retainer is invoiced on the 1st, the commission on the reconciliation report. Cap the total at a third of tracked revenue if the clinic asks. We will rarely hit it.</li>
+            <li><strong>90-day pilot, then rolling 30 days.</strong> Either side walks with 30 days notice. Ninety days is enough to prove or kill it.</li>
+            <li><strong>Exclusivity by city or radius.</strong> One clinic per catchment. It is the reason they should sign quickly and it stops us competing with ourselves in the auction.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Running it from Sofia</h2>
+        <div class="prose">
+          <p>Two founders sell, set strategy and own the clinic relationships. One hire in Sofia runs the machine: media buying, creative iteration, funnel and CRM setup, lead quality checks and the weekly report. At a loaded cost around 2,600 euros a month that person carries 6 to 10 clinics depending on how much of the creative and reporting is templated. Second hire at 8 or so clinics, before the first one is drowning.</p>
+          <p>Appointment setting stays with the clinic in the pilot. We give them the automation: an SMS or WhatsApp to the lead within a minute, a calendar link, two automated nudges, and a shared sheet showing which leads were called and when. Once we have 5 or more clinics in one language, a setter in Sofia who books consults on the clinic's behalf is the upsell. It lifts booked rate and it gives us the attribution data first hand.</p>
+          <p>Tooling is cheap. A CRM with sub-accounts per clinic, call tracking numbers per country, Meta, an editing tool for creative, a shared drive of ad templates by treatment type. Budget 450 euros a month fixed and 150 to 250 per clinic.</p>
+          <h3>Where to start in Europe</h3>
+          <div class="tw"><table>
+            <thead><tr><th>Market</th><th>Why</th><th>Watch out</th></tr></thead>
+            <tbody>
+              <tr><td>UK and Ireland</td><td>English creative, high implant and Invisalign prices, long NHS waits pushing people private.</td><td>Crowded auction, dental tourism ads eat the same audience.</td></tr>
+              <tr><td>Germany, Austria, Switzerland</td><td>Highest treatment values in Europe, clinics with capacity and budget.</td><td>German creative and a German-speaking setter. Stricter advertising rules for medical claims.</td></tr>
+              <tr><td>Netherlands and Belgium</td><td>Cheap CPLs relative to price levels, small country so one creative set covers it.</td><td>Smaller clinics, lower monthly budgets.</td></tr>
+              <tr><td>Spain, Italy, Portugal</td><td>Lowest CPLs, lots of clinic chains hungry for volume.</td><td>Lower average treatment value, slower payers.</td></tr>
+              <tr><td>Dental tourism clinics (Hungary, Poland, Croatia, Spain, Turkey side of Europe)</td><td>Packages of 5,000 to 15,000 euros, already used to buying leads, English and German creative sells to UK and DACH patients.</td><td>Longer sales cycle, travel dates slip, attribution has to be tight.</td></tr>
+            </tbody>
+          </table></div>
+          <p>Sofia sits in the middle of every European time zone and the hire speaks English plus most likely Bulgarian and maybe German or Russian. Start with English-language markets and the tourism clinics, then add German once there is a setter for it.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Risks that kill the commission model</h2>
+        <div class="prose">
+          <ul>
+            <li><strong>Meta's health data rules.</strong> Since 2025 Meta restricts what data sources in health categories can send for optimisation. A dental clinic's pixel or CAPI dataset can get flagged, which limits optimising on lower-funnel custom conversions. Check the data source category in Events Manager on day one. Fallback is the leads objective with instant forms and a qualifying question, which still works.</li>
+            <li><strong>GDPR.</strong> Anything about a person's teeth is health data, a special category. Keep forms to name, phone, email and a treatment interest dropdown, with an explicit consent checkbox and a privacy notice naming the clinic as controller. Do not pipe lead details into tools that are not under a processing agreement.</li>
+            <li><strong>Attribution disputes.</strong> If the clinic does not share numbers, commission is a handshake. The retainer floor, the lead sheet, the monthly reconciliation and the per-lead fallback exist for this. If a clinic refuses to share collected revenue, bill per show instead.</li>
+            <li><strong>Slow follow-up.</strong> A lead called after two hours is worth a fraction of one called in five minutes. Most bad results in this category are front desk problems dressed up as ad problems. The speed to lead clause and the automation are the fix, and the setter service is the upsell.</li>
+            <li><strong>No capacity.</strong> Only sign clinics that can add 5 to 15 high-ticket cases a month. A full diary means long waits, no-shows and a churned client. Ask for chair capacity and surgeon days in the first call.</li>
+            <li><strong>Creative fatigue in small markets.</strong> A city of 300,000 burns through a creative set in weeks. Budget for new video every month and reuse winners across clinics in the same language.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Assumptions behind the presets</h2>
+        <p class="sub">These are our planning ranges, not measured results. Treat every one as a hypothesis for the pilot. The sliders exist so you can drop in real numbers after 30 days.</p>
+        <div class="tw"><table>
+          <thead><tr><th>Input</th><th class="num">Conservative</th><th class="num">Base</th><th class="num">Aggressive</th><th>Reasoning</th></tr></thead>
+          <tbody>
+            <tr><td>Cost per lead, blended</td><td class="num">45</td><td class="num">35</td><td class="num">30</td><td>Instant forms in Western Europe land around 20 to 35 euros for implant and aligner offers. A landing page with a custom conversion costs 35 to 70 but books at a much higher rate. We assume a mix.</td></tr>
+            <tr><td>Lead to booked consult</td><td class="num">35%</td><td class="num">38%</td><td class="num">40%</td><td>Depends on speed to lead more than on anything we do in the ad account. Form leads book at 25 to 35%, funnel leads at 40 to 55%.</td></tr>
+            <tr><td>Show rate</td><td class="num">60%</td><td class="num">62%</td><td class="num">65%</td><td>Free consults no-show a lot. Reminders and a small refundable deposit lift this toward 75%.</td></tr>
+            <tr><td>Consult to accepted treatment</td><td class="num">30%</td><td class="num">32%</td><td class="num">35%</td><td>Case acceptance on cold paid leads for implants runs 25 to 40%. Clinics with in-house financing sit at the top.</td></tr>
+            <tr><td>Average treatment value</td><td class="num">3,500</td><td class="num">4,000</td><td class="num">4,500</td><td>Single implant with crown 1,500 to 3,500 in Western Europe, many patients need two or more. All-on-4 from 8,000. Invisalign 3,000 to 6,000. Veneers 600 to 1,200 a tooth.</td></tr>
+            <tr><td>Charged at the first visit</td><td class="num">150</td><td class="num">200</td><td class="num">200</td><td>Partner's read on Clinica Duchev: nobody leaves without paying around 200 euros for the consult, imaging and cleaning. Conservative case discounts it for clinics that run free consults.</td></tr>
+            <tr><td>Clinic gross margin</td><td class="num">50%</td><td class="num">52%</td><td class="num">55%</td><td>After lab, implant components, materials and clinician time. Owner-operators run higher.</td></tr>
+            <tr><td>Revenue we can prove</td><td class="num">75%</td><td class="num">85%</td><td class="num">90%</td><td>Some patients book by phone without the form, some the clinic will argue about. This is the share the commission actually gets paid on.</td></tr>
+            <tr><td>Clinics per Sofia hire</td><td class="num">6</td><td class="num">8</td><td class="num">10</td><td>Templated creative and reporting push this up. Setter work pushes it down.</td></tr>
+            <tr><td>Cost to sign a clinic</td><td class="num">1,200</td><td class="num">800</td><td class="num">500</td><td>Outbound email and calls, a few demos, founder time priced at a modest hourly. Referrals from happy clinics drive this toward zero.</td></tr>
+            <tr><td>Monthly churn</td><td class="num">12%</td><td class="num">8%</td><td class="num">5%</td><td>Agencies in this space lose clients fast when results wobble. Commission pricing and a real ROAS keep clinics longer than retainers do.</td></tr>
+            <tr><td>New clinics per month</td><td class="num">1.5</td><td class="num">2.5</td><td class="num">4</td><td>Two founders doing outbound, later helped by referrals and case studies.</td></tr>
+          </tbody>
+        </table></div>
+        <p class="foot">Sofia hire at 2,600 euros a month loaded assumes a media buyer with two or three years of experience on a Bulgarian employment contract including employer contributions. Setup fee 500, retainer 750 and commission 10% are the starting offer, not preset per scenario, so you can compare the three cases under one price.</p>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const eur = x => (x<0?'-':'')+'€'+Math.round(Math.abs(x)).toLocaleString('en-GB');
+  const eurK = x => Math.abs(x)>=100000 ? (x<0?'-':'')+'€'+(Math.abs(x)/1000).toFixed(0)+'k' : eur(x);
+  const pct = x => Math.round(x*100)+'%';
+  const pct1 = x => (x*100).toFixed(1).replace(/\.0$/,'')+'%';
+  const num = x => Math.round(x).toLocaleString('en-GB');
+  const num1 = x => (Math.round(x*10)/10).toLocaleString('en-GB');
+  const mult = x => (isFinite(x)? (Math.round(x*10)/10).toFixed(1)+'x' : '∞');
+
+  const CONTROLS = [
+    {group:'Clinic campaign, per clinic per month', items:[
+      {k:'spend', label:'Ad spend, paid by the clinic to Meta', min:1000,max:10000,step:250, fmt:eur},
+      {k:'cpl', label:'Cost per lead, blended forms and funnel', min:10,max:120,step:1, fmt:eur},
+      {k:'book', label:'Lead to booked consult', min:0.1,max:0.7,step:0.01, fmt:pct},
+      {k:'show', label:'Show rate at the consult', min:0.3,max:0.9,step:0.01, fmt:pct},
+      {k:'close', label:'Consult to accepted treatment', min:0.1,max:0.7,step:0.01, fmt:pct},
+      {k:'aov', label:'Average treatment value, accepted cases', min:1000,max:15000,step:100, fmt:eur},
+      {k:'minVisit', label:'Charged at the first visit, every show', min:0,max:600,step:10, fmt:eur, note:'Consult, X-ray, cleaning. Paid whether or not they accept the plan.'},
+      {k:'margin', label:'Clinic gross margin on treatment', min:0.3,max:0.8,step:0.01, fmt:pct},
+      {k:'attr', label:'Share of closed revenue we can prove', min:0.4,max:1,step:0.01, fmt:pct, note:'Commission is paid on this share only.'},
+    ]},
+    {group:'Our fee', items:[
+      {k:'setup', label:'Setup fee, one time', min:0,max:3000,step:50, fmt:eur},
+      {k:'retainer', label:'Monthly retainer', min:0,max:4000,step:50, fmt:eur},
+      {k:'perLead', label:'Per lead delivered', min:0,max:60,step:1, fmt:eur},
+      {k:'perShow', label:'Per consult that shows up', min:0,max:300,step:5, fmt:eur},
+      {k:'comm', label:'Commission on proven revenue', min:0,max:0.35,step:0.005, fmt:pct1},
+    ]},
+    {group:'Agency costs', items:[
+      {k:'salary', label:'Sofia hire, fully loaded per month', min:1500,max:5000,step:50, fmt:eur},
+      {k:'cap', label:'Clinics one person can run', min:3,max:15,step:1, fmt:num},
+      {k:'varCost', label:'Tools and creative per clinic per month', min:0,max:600,step:10, fmt:eur},
+      {k:'fixed', label:'Fixed tools and overhead per month', min:0,max:2000,step:50, fmt:eur},
+      {k:'cac', label:'Cost to sign one clinic', min:0,max:3000,step:50, fmt:eur},
+      {k:'churn', label:'Monthly clinic churn', min:0,max:0.25,step:0.005, fmt:pct1},
+      {k:'newPerMo', label:'New clinics signed per month', min:0,max:8,step:0.5, fmt:num1},
+    ]},
+  ];
+
+  const PRESETS = {
+    conservative:{spend:2000,cpl:45,book:.35,show:.60,close:.30,aov:3500,minVisit:150,margin:.50,attr:.75, cap:6,varCost:250,cac:1200,churn:.12,newPerMo:1.5},
+    base:        {spend:3000,cpl:35,book:.38,show:.62,close:.32,aov:4000,minVisit:200,margin:.52,attr:.85, cap:8,varCost:200,cac:800,churn:.08,newPerMo:2.5},
+    aggressive:  {spend:3500,cpl:30,book:.40,show:.65,close:.35,aov:4500,minVisit:200,margin:.55,attr:.90, cap:10,varCost:150,cac:500,churn:.05,newPerMo:4},
+  };
+  const FEE_DEFAULTS = {setup:500, retainer:750, perLead:0, perShow:0, comm:0.10, salary:2600, fixed:450};
+
+  let P = Object.assign({}, FEE_DEFAULTS, PRESETS.base);
+  let scenario = 'base';
+  let hmMetric = 'roas';
+  try { const s = localStorage.getItem('dental-model-hm'); if (s==='fee'||s==='roas') hmMetric = s; } catch(e){}
+
+  // ---------- model ----------
+  function calc(p){
+    const leads = p.spend / p.cpl;
+    const booked = leads * p.book;
+    const shows = booked * p.show;
+    const patients = shows * p.close;
+    const visitRev = shows * p.minVisit;
+    const treatRev = patients * p.aov;
+    const revenue = treatRev + visitRev;
+    const tracked = revenue * p.attr;
+    const fee = p.retainer + leads*p.perLead + shows*p.perShow + tracked*p.comm;
+    const totalMkt = p.spend + fee;
+    const share = revenue>0 ? totalMkt/revenue : Infinity;
+    const blended = totalMkt>0 ? revenue/totalMkt : Infinity;
+    const roasAds = revenue / p.spend;
+    const treatCost = revenue * (1-p.margin);
+    const clinicGP = revenue * p.margin;
+    const clinicNet = clinicGP - totalMkt;
+    const cacPatient = patients>0 ? totalMkt/patients : Infinity;
+    const seat = p.salary / p.cap;
+    const agencyVar = p.varCost + seat;
+    const contrib = fee - agencyVar;
+    const fixedFee = fee - tracked*p.comm;
+    const maxComm3 = tracked>0 ? (revenue/3 - p.spend - fixedFee)/tracked : 0;
+    const maxComm4 = tracked>0 ? (revenue/4 - p.spend - fixedFee)/tracked : 0;
+    const lifetime = p.churn>0 ? 1/p.churn : 60;
+    const ltv = contrib*lifetime + p.setup - p.cac;
+    return {leads,booked,shows,patients,visitRev,treatRev,revenue,tracked,fee,totalMkt,share,blended,roasAds,treatCost,clinicGP,clinicNet,cacPatient,seat,agencyVar,contrib,maxComm3,maxComm4,lifetime,ltv};
+  }
+
+  function project(p, m){
+    const rows=[]; let active=0, cum=0;
+    for(let i=1;i<=12;i++){
+      const billing = active*(1-p.churn);
+      const churned = active - billing;
+      active = billing + p.newPerMo;
+      const heads = Math.max(1, Math.ceil(active/p.cap));
+      const revenue = billing*m.fee + p.newPerMo*p.setup;
+      const cost = heads*p.salary + p.fixed + p.newPerMo*p.cac + billing*p.varCost;
+      const net = revenue - cost; cum += net;
+      rows.push({month:i, signed:p.newPerMo, churned, active, billing, heads, revenue, cost, net, cum});
+    }
+    return rows;
+  }
+
+  function fairness(blended){
+    if (blended>=5) return {cls:'good', label:'Clinic wins big', text:'The clinic keeps more than 5 euros for every euro out. We are cheap. Room to raise the commission or the floor.'};
+    if (blended>=3) return {cls:'fair', label:'Fair for both', text:'Between 3x and 5x all in. The clinic makes real money on our patients and we get paid properly. This is the zone to price into.'};
+    if (blended>=2) return {cls:'tight', label:'Tight for the clinic', text:'Under 3x all in. It still works on paper but the owner will feel it, and one bad month ends the contract. Drop the commission or fix the funnel.'};
+    return {cls:'bad', label:'Does not work for the clinic', text:'Under 2x. After treatment cost there is almost nothing left. Do not sell this. Fix cost per lead or booking rate first.'};
+  }
+  function agencyVerdict(contrib){
+    if (contrib>=2500) return {cls:'good', label:'Worth the seat'};
+    if (contrib>=1200) return {cls:'fair', label:'Works at scale'};
+    if (contrib>=500) return {cls:'tight', label:'Thin'};
+    return {cls:'bad', label:'Not worth it'};
+  }
+  const pill = (v) => `<span class="pill ${v.cls}"><i></i>${v.label}</span>`;
+
+  // ---------- controls ----------
+  const controlsEl = document.getElementById('controls');
+  function buildControls(){
+    controlsEl.innerHTML = CONTROLS.map(g => `<div class="group"><h3>${g.group}</h3>${g.items.map(c => `
+      <div class="ctl">
+        <div class="row"><label for="in-${c.k}">${c.label}</label><output id="out-${c.k}" for="in-${c.k}"></output></div>
+        <input type="range" id="in-${c.k}" data-k="${c.k}" min="${c.min}" max="${c.max}" step="${c.step}">
+        ${c.note?`<small>${c.note}</small>`:''}
+      </div>`).join('')}</div>`).join('');
+    controlsEl.addEventListener('input', e => {
+      const k = e.target.dataset.k; if(!k) return;
+      P[k] = parseFloat(e.target.value);
+      if (k in PRESETS.base) { scenario='custom'; }
+      render();
+    });
+  }
+  function syncControls(){
+    CONTROLS.forEach(g => g.items.forEach(c => {
+      const el = document.getElementById('in-'+c.k); if(el.value != P[c.k]) el.value = P[c.k];
+      document.getElementById('out-'+c.k).textContent = c.fmt(P[c.k]);
+    }));
+    document.querySelectorAll('[data-sc]').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.sc===scenario ? 'true':'false');
+      if (b.dataset.sc==='custom') b.disabled = scenario!=='custom';
+    });
+  }
+  document.querySelectorAll('[data-sc]').forEach(b => b.addEventListener('click', () => {
+    const sc = b.dataset.sc; if(!PRESETS[sc]) return;
+    Object.assign(P, PRESETS[sc]); scenario = sc; render();
+  }));
+  document.querySelectorAll('[data-hm]').forEach(b => b.addEventListener('click', () => {
+    hmMetric = b.dataset.hm; try{ localStorage.setItem('dental-model-hm', hmMetric);}catch(e){}
+    document.querySelectorAll('[data-hm]').forEach(x => x.setAttribute('aria-pressed', x.dataset.hm===hmMetric?'true':'false'));
+    renderHeat(calc(P));
+  }));
+
+  // ---------- renderers ----------
+  function renderKpis(m){
+    const f = fairness(m.blended), a = agencyVerdict(m.contrib);
+    document.getElementById('kpis').innerHTML = [
+      {l:'New high-ticket patients per clinic per month', v:num1(m.patients), d:`from ${num(m.leads)} leads and ${num1(m.shows)} consults`},
+      {l:'Revenue we generate for the clinic', v:eurK(m.revenue), d:`${eurK(m.visitRev)} of it from first visits, ${mult(m.roasAds)} on ad spend alone`},
+      {l:'Clinic blended ROAS, ads plus our fee', v:mult(m.blended), d:`marketing is ${isFinite(m.share)?pct(m.share):'n/a'} of revenue`},
+      {l:'Our fee per clinic per month', v:eur(m.fee), d:`${isFinite(m.revenue)&&m.revenue>0?pct1(m.fee/m.revenue):'n/a'} of treatment revenue`},
+      {l:'Our contribution per clinic', v:eur(m.contrib), d:`after ${eur(m.agencyVar)} seat share and tools`},
+      {l:'Clinic profit on our patients', v:eur(m.clinicNet), d:`after treatment cost, ads and our fee`},
+    ].map(t => `<div class="tile"><div class="l">${t.l}</div><div class="v ${t.v.startsWith('-')?'neg':''}">${t.v}</div><div class="d">${t.d}</div></div>`).join('');
+    document.getElementById('verdict').innerHTML = `
+      <div><div class="eyebrow" style="margin-bottom:4px">For the clinic</div>${pill(f)}</div>
+      <div><div class="eyebrow" style="margin-bottom:4px">For us</div>${pill(a)}</div>
+      <p>${f.text}</p>`;
+  }
+
+  function renderFunnel(m){
+    const steps = [
+      {n:'Ad spend', s:'paid to Meta by the clinic', v:eur(P.spend), w:1, c:'var(--surface-2)', money:true},
+      {n:'Leads', s:`at ${eur(P.cpl)} each`, v:num(m.leads), sub:'', w:1, c:'var(--q250)'},
+      {n:'Booked consults', s:`${pct(P.book)} of leads`, v:num1(m.booked), w:m.booked/m.leads, c:'var(--q350)'},
+      {n:'Showed up', s:`${pct(P.show)} of booked`, v:num1(m.shows), w:m.shows/m.leads, c:'var(--q450)'},
+      {n:'Accepted treatment', s:`${pct(P.close)} of shows`, v:num1(m.patients), w:m.patients/m.leads, c:'var(--q600)'},
+    ];
+    document.getElementById('funnel').innerHTML = steps.filter(s=>!s.money).map(s => `
+      <div class="fr"><div class="n">${s.n}<small>${s.s}</small></div>
+      <div class="bar"><i style="width:${Math.max(0.4,s.w*100)}%;background:${s.c}"></i></div>
+      <div class="v">${s.v}</div></div>`).join('');
+    document.getElementById('funnel-note').textContent =
+      `Lead to patient, all in: ${pct1(P.book*P.show*P.close)}. Every show pays about ${eur(P.minVisit)} at the door, so ${num1(m.shows)} consults are ${eur(m.visitRev)} before a single implant. Each accepted patient costs the clinic ${eur(m.cacPatient)} in ads plus our fee, against a ${eur(P.aov)} case.`;
+  }
+
+  function renderSplit(m){
+    const parts = [
+      {n:'Treatment cost', v:m.treatCost, c:'var(--gray)', ink:'var(--ink)'},
+      {n:'Ad spend', v:P.spend, c:'var(--s1)', ink:'#fff'},
+      {n:'Our fee', v:m.fee, c:'var(--s2)', ink:'#fff'},
+      {n:'Clinic keeps', v:Math.max(0,m.clinicNet), c:'var(--s3)', ink:'#fff'},
+    ];
+    const tot = parts.reduce((a,b)=>a+b.v,0) || 1;
+    document.getElementById('stack').innerHTML = parts.map(p => {
+      const w = p.v/tot*100;
+      const label = w>=11 ? `<span>${pct(p.v/tot)}</span>` : '';
+      return `<div style="flex:${p.v} 1 0;background:${p.c};color:${p.ink}" title="${p.n}: ${eur(p.v)}">${label}</div>`;
+    }).join('');
+    document.getElementById('stack-legend').innerHTML = parts.map(p => `<span><i style="background:${p.c}"></i>${p.n} <b>${eur(p.v)}</b></span>`).join('')
+      + (m.clinicNet<0 ? `<span class="neg">Clinic is losing ${eur(-m.clinicNet)} a month on our patients.</span>` : '');
+    const pos = Math.min(100, Math.max(0, (isFinite(m.share)?m.share:1)*100/0.6));
+    document.getElementById('needle').style.left = pos+'%';
+    const mc = (c) => c<=0 ? '0%' : pct1(Math.min(c,1));
+    document.getElementById('maxcomm').innerHTML = `
+      <div class="mini"><div class="l">Highest commission that keeps the clinic at 3x all in</div><div class="v">${mc(m.maxComm3)}</div><div class="d">with the retainer and per-lead or per-show fees as set${m.maxComm3<=0?'. The fixed fees already break 3x.':''}</div></div>
+      <div class="mini"><div class="l">Commission that leaves the clinic at a comfortable 4x</div><div class="v">${mc(m.maxComm4)}</div><div class="d">the number to open with when the clinic is sceptical</div></div>
+      <div class="mini"><div class="l">Clinic's cost per new patient, all in</div><div class="v">${eur(m.cacPatient)}</div><div class="d">${pct1(m.cacPatient/P.aov)} of an average case, before the first-visit revenue that pays part of it back. Most clinics accept up to 25 to 30% on implant work.</div></div>`;
+  }
+
+  function renderUnit(m){
+    const a = agencyVerdict(m.contrib);
+    document.getElementById('unit').innerHTML = `
+      <thead><tr><th>Per clinic, per month</th><th class="num">Euros</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Retainer</td><td class="num">${eur(P.retainer)}</td><td>Invoiced on the 1st, the floor</td></tr>
+        <tr><td>Per lead and per show fees</td><td class="num">${eur(m.leads*P.perLead + m.shows*P.perShow)}</td><td>${num(m.leads)} leads, ${num1(m.shows)} shows</td></tr>
+        <tr><td>Commission</td><td class="num">${eur(m.tracked*P.comm)}</td><td>${pct1(P.comm)} of ${eur(m.tracked)} proven revenue</td></tr>
+        <tr class="total"><td>Fee revenue</td><td class="num">${eur(m.fee)}</td><td>${m.revenue>0?pct1(m.fee/m.revenue):'n/a'} of treatment revenue</td></tr>
+        <tr><td>Share of the Sofia seat</td><td class="num">-${eur(m.seat)}</td><td>${eur(P.salary)} across ${P.cap} clinics</td></tr>
+        <tr><td>Tools and creative</td><td class="num">-${eur(P.varCost)}</td><td>CRM sub-account, numbers, editing</td></tr>
+        <tr class="total"><td>Contribution per clinic</td><td class="num ${m.contrib<0?'neg':''}">${eur(m.contrib)}</td><td>${pill(a)}</td></tr>
+        <tr><td>Expected lifetime at ${pct1(P.churn)} churn</td><td class="num">${num1(m.lifetime)} mo</td><td>1 divided by monthly churn</td></tr>
+        <tr class="total"><td>Lifetime value of one clinic</td><td class="num ${m.ltv<0?'neg':''}">${eur(m.ltv)}</td><td>contribution over lifetime, plus setup fee, minus ${eur(P.cac)} to sign</td></tr>
+      </tbody>`;
+  }
+
+  function renderAgency(m, rows){
+    const last = rows[11];
+    const be = m.contrib>0 ? (P.salary + P.fixed)/m.contrib : Infinity;
+    const beNote = m.contrib>0 ? `${num1(Math.ceil(be*10)/10)} billing clinics cover one Sofia seat and fixed tools` : 'no break-even, contribution per clinic is negative';
+    const y1 = rows.reduce((a,r)=>a+r.net,0);
+    document.getElementById('agency-tiles').innerHTML = `
+      <div class="mini"><div class="l">Break-even</div><div class="v">${isFinite(be)?num1(Math.ceil(be*10)/10):'n/a'} clinics</div><div class="d">${beNote}</div></div>
+      <div class="mini"><div class="l">Month 12 run rate, net</div><div class="v ${last.net<0?'neg':''}">${eurK(last.net)}/mo</div><div class="d">${num1(last.active)} active clinics, ${last.heads} in Sofia, ${eurK(last.net/2)} per founder before tax</div></div>
+      <div class="mini"><div class="l">Year one cumulative</div><div class="v ${y1<0?'neg':''}">${eurK(y1)}</div><div class="d">low point ${eurK(Math.min(...rows.map(r=>r.cum)))} cumulative in month ${rows.reduce((a,r,i)=>r.cum<rows[a].cum?i:a,0)+1}</div></div>`;
+    document.getElementById('proj').innerHTML = `
+      <thead><tr><th>Month</th><th class="num">Signed</th><th class="num">Churned</th><th class="num">Active</th><th class="num">Billing</th><th class="num">Sofia heads</th><th class="num">Fee revenue</th><th class="num">Costs</th><th class="num">Net</th><th class="num">Cumulative</th></tr></thead>
+      <tbody>${rows.map(r => `<tr><td>${r.month}</td><td class="num">${num1(r.signed)}</td><td class="num">${num1(r.churned)}</td><td class="num">${num1(r.active)}</td><td class="num">${num1(r.billing)}</td><td class="num">${r.heads}</td><td class="num">${eur(r.revenue)}</td><td class="num">${eur(r.cost)}</td><td class="num ${r.net<0?'neg':''}">${eur(r.net)}</td><td class="num ${r.cum<0?'neg':''}">${eur(r.cum)}</td></tr>`).join('')}</tbody>`;
+  }
+
+  // ----- svg charts -----
+  function niceMax(v){ if(v<=0) return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); const n=v/p; const s = n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10; return s*p; }
+  function fmtTick(v){ return Math.abs(v)>=1000 ? (v/1000).toFixed(Math.abs(v)%1000?1:0)+'k' : String(Math.round(v)); }
+
+  function columnChart(el, rows){
+    const W=560,H=220,L=40,R=10,T=14,B=28; const pw=W-L-R, ph=H-T-B;
+    const max = niceMax(Math.max(...rows.map(r=>r.active)));
+    const ticks = 4; let g='';
+    for(let i=0;i<=ticks;i++){ const v=max*i/ticks, y=T+ph-ph*i/ticks; g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--grid)" stroke-width="1"/><text x="${L-6}" y="${y+4}" text-anchor="end">${fmtTick(v)}</text>`; }
+    const slot = pw/12, bw = Math.min(24, slot*0.6);
+    let bars='';
+    rows.forEach((r,i)=>{ const h=ph*r.active/max, x=L+slot*i+(slot-bw)/2, y=T+ph-h;
+      bars+=`<path d="M${x},${T+ph} V${y+4} a4,4 0 0 1 4,-4 h${bw-8} a4,4 0 0 1 4,4 V${T+ph} Z" fill="var(--s1)"/>`;
+      bars+=`<text x="${x+bw/2}" y="${H-10}" text-anchor="middle">${r.month}</text>`;
+      if(i===11) bars+=`<text x="${x+bw/2}" y="${y-6}" text-anchor="middle" style="fill:var(--ink);font-weight:600">${num1(r.active)}</text>`;
+    });
+    el.querySelector('.svgwrap').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Active clinics by month">${g}<line x1="${L}" x2="${W-R}" y1="${T+ph}" y2="${T+ph}" stroke="var(--axis)"/>${bars}</svg>`;
+    hover(el, rows, W, L, slot, (r)=>`Month ${r.month}<br><b>${num1(r.active)}</b> active, ${num1(r.billing)} billing`);
+  }
+
+  function lineChart(el, rows){
+    const W=560,H=220,L=48,R=12,T=14,B=28; const pw=W-L-R, ph=H-T-B;
+    const vals = rows.flatMap(r=>[r.revenue,r.net]);
+    let max = niceMax(Math.max(...vals,1)); let min = Math.min(...vals,0); min = min<0 ? -niceMax(-min) : 0;
+    const y = v => T + ph*(1-(v-min)/(max-min));
+    const x = i => L + pw*i/11;
+    const ticks=4; let g='';
+    for(let i=0;i<=ticks;i++){ const v=min+(max-min)*i/ticks, yy=y(v); g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--grid)"/><text x="${L-6}" y="${yy+4}" text-anchor="end">${fmtTick(v)}</text>`; }
+    const path = k => rows.map((r,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(r[k]).toFixed(1)}`).join(' ');
+    const area = `${path('revenue')} L${x(11)},${y(0)} L${x(0)},${y(0)} Z`;
+    let labels=''; rows.forEach((r,i)=>{ labels+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle">${r.month}</text>`; });
+    const last = rows[11];
+    const end = (k,c) => `<circle cx="${x(11)}" cy="${y(last[k])}" r="4.5" fill="${c}" stroke="var(--surface)" stroke-width="2"/>`;
+    el.querySelector('.svgwrap').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly fee revenue and net profit">
+      ${g}<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--axis)"/>
+      <path d="${area}" fill="var(--s1)" opacity=".08"/>
+      <path d="${path('revenue')}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="${path('net')}" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      ${end('revenue','var(--s1)')}${end('net','var(--s2)')}
+      <text x="${x(11)-8}" y="${y(last.revenue)-9}" text-anchor="end" style="fill:var(--ink);font-weight:600">${eurK(last.revenue)}</text>
+      <text x="${x(11)-8}" y="${y(last.net)+15}" text-anchor="end" style="fill:var(--ink);font-weight:600">${eurK(last.net)}</text>
+      <line id="xh" x1="0" x2="0" y1="${T}" y2="${T+ph}" stroke="var(--axis)" opacity="0"/>
+      ${labels}</svg>
+      <div class="legend"><span><i style="background:var(--s1)"></i>Fee revenue</span><span><i style="background:var(--s2)"></i>Net profit</span></div>`;
+    hover(el, rows, W, L, pw/11, (r)=>`Month ${r.month}<br>Revenue <b>${eur(r.revenue)}</b><br>Net <b>${eur(r.net)}</b>`, true);
+  }
+
+  function hover(el, rows, W, L, slot, html, line){
+    const svg = el.querySelector('svg'), tip = el.querySelector('.tip'), xh = svg.querySelector('#xh');
+    const show = (clientX) => {
+      const rect = svg.getBoundingClientRect(); const sx = (clientX-rect.left)/rect.width*W;
+      let i = line ? Math.round((sx-L)/slot) : Math.floor((sx-L)/slot); i = Math.max(0, Math.min(11, i));
+      const r = rows[i]; tip.innerHTML = html(r); tip.classList.add('on');
+      const px = line ? L+slot*i : L+slot*i+slot/2;
+      const hostRect = el.getBoundingClientRect();
+      tip.style.left = (rect.left-hostRect.left + px/W*rect.width)+'px';
+      tip.style.top = (rect.top-hostRect.top + 10)+'px';
+      if(xh){ xh.setAttribute('x1',px); xh.setAttribute('x2',px); xh.setAttribute('opacity','1'); }
+    };
+    svg.addEventListener('mousemove', e => show(e.clientX));
+    svg.addEventListener('touchstart', e => show(e.touches[0].clientX), {passive:true});
+    svg.addEventListener('touchmove', e => show(e.touches[0].clientX), {passive:true});
+    svg.addEventListener('mouseleave', () => { tip.classList.remove('on'); if(xh) xh.setAttribute('opacity','0'); });
+  }
+
+  const COMMS = [0.05,0.08,0.10,0.12,0.15,0.18,0.20,0.25];
+  const AOVS = [2000,2500,3000,3500,4000,5000,6000,8000];
+  const SEQ = ['--q100','--q200','--q300','--q400','--q500','--q600','--q700'];
+  function renderHeat(m){
+    const cells = COMMS.map(c => AOVS.map(a => calc(Object.assign({}, P, {comm:c, aov:a}))));
+    const val = x => hmMetric==='roas' ? x.blended : x.fee;
+    let lo, hi; if(hmMetric==='roas'){ lo=1; hi=8; } else { lo=0; hi=Math.max(...cells.flat().map(val)); }
+    const step = v => { const t = Math.max(0, Math.min(1, (v-lo)/(hi-lo||1))); return SEQ[Math.min(6, Math.floor(t*7))]; };
+    const dark = s => ['--q400','--q500','--q600','--q700'].includes(s);
+    const fmt = v => hmMetric==='roas' ? mult(v) : eur(v);
+    document.getElementById('heat').innerHTML = `
+      <thead><tr><th class="rl">Commission</th>${AOVS.map(a=>`<th>${eur(a)}</th>`).join('')}</tr></thead>
+      <tbody>${COMMS.map((c,i)=>`<tr><th class="rl">${pct1(c)}</th>${AOVS.map((a,j)=>{ const v=val(cells[i][j]); const s=step(v); const cur = Math.abs(c-P.comm)<0.0026 && a===P.aov;
+        return `<td><div style="background:var(${s});color:${dark(s)?'#fff':'#141a22'};${cur?'outline:2px solid var(--ink);outline-offset:-2px':''}" title="${pct1(c)} at ${eur(a)}: clinic ${mult(cells[i][j].blended)}, fee ${eur(cells[i][j].fee)}">${fmt(v)}</div></td>`;}).join('')}</tr>`).join('')}</tbody>`;
+    document.getElementById('heat-note').textContent = hmMetric==='roas'
+      ? 'Read it as the clinic would. Cells under 3.0x are the ones they push back on. The outlined cell is the current slider setting. Columns are average treatment value.'
+      : 'Our monthly fee per clinic at each commission and treatment value. The outlined cell is the current slider setting. Switch to the ROAS view to check the same cell is still fair.';
+  }
+
+  function renderStructures(m){
+    const rowsDef = [
+      {n:'Retainer only', o:{retainer:1500, perLead:0, perShow:0, comm:0}, risk:'We carry none. The clinic pays whether or not patients show. Easy to sell to sceptics, easy to lose after one flat month.'},
+      {n:'Per lead', o:{retainer:0, perLead:35, perShow:0, comm:0}, risk:'We get paid for volume, not quality. Pushes us toward cheap form leads. Clinics learn to hate it.'},
+      {n:'Per consult that shows', o:{retainer:0, perLead:0, perShow:150, comm:0}, risk:'Shared. Depends on their front desk booking well. Works when the clinic will not share revenue.'},
+      {n:'Pure commission', o:{retainer:0, perLead:0, perShow:0, comm:0.15}, risk:'We carry all of it. Big upside in a good clinic, nothing in a slow one, and it lives or dies on attribution.'},
+      {n:'Floor plus upside', o:{retainer:750, perLead:0, perShow:0, comm:0.10}, risk:'Shared. The floor covers our seat, the commission aligns us with their revenue. The one to lead with.'},
+      {n:'Current sliders', o:{}, risk:'Whatever the fee sliders say now.'},
+    ];
+    document.getElementById('structures').innerHTML = `
+      <thead><tr><th>Structure</th><th>Terms</th><th class="num">Our fee / clinic</th><th class="num">Share of revenue</th><th class="num">Clinic all-in ROAS</th><th class="num">Our contribution</th><th>Who carries the risk</th></tr></thead>
+      <tbody>${rowsDef.map(d => { const p = Object.assign({}, P, d.o); const x = calc(p); const f = fairness(x.blended);
+        const terms = [p.retainer?eur(p.retainer)+'/mo':'', p.perLead?eur(p.perLead)+'/lead':'', p.perShow?eur(p.perShow)+'/show':'', p.comm?pct1(p.comm)+' of proven revenue':''].filter(Boolean).join(' + ') || 'free';
+        return `<tr><td><strong>${d.n}</strong></td><td>${terms}</td><td class="num">${eur(x.fee)}</td><td class="num">${x.revenue>0?pct1(x.fee/x.revenue):'n/a'}</td><td class="num">${mult(x.blended)} ${pill(f)}</td><td class="num ${x.contrib<0?'neg':''}">${eur(x.contrib)}</td><td style="max-width:34ch">${d.risk}</td></tr>`; }).join('')}</tbody>`;
+  }
+
+  function renderCompare(){
+    const cols = ['conservative','base','aggressive'];
+    const ms = cols.map(k => calc(Object.assign({}, P, PRESETS[k])));
+    const pr = cols.map(k => project(Object.assign({}, P, PRESETS[k]), calc(Object.assign({}, P, PRESETS[k]))));
+    const row = (label, f, cls) => `<tr><td>${label}</td>${ms.map((m,i)=>`<td class="num">${f(m, PRESETS[cols[i]], pr[i])}</td>`).join('')}</tr>`;
+    document.getElementById('compare').innerHTML = `
+      <thead><tr><th>Per clinic, per month</th><th class="num">Conservative</th><th class="num">Base</th><th class="num">Aggressive</th></tr></thead>
+      <tbody>
+        ${row('Ad spend', (m,p)=>eur(p.spend))}
+        ${row('Cost per lead', (m,p)=>eur(p.cpl))}
+        ${row('Leads', m=>num(m.leads))}
+        ${row('Lead to patient', (m,p)=>pct1(p.book*p.show*p.close))}
+        ${row('New patients', m=>num1(m.patients))}
+        ${row('Average treatment value', (m,p)=>eur(p.aov))}
+        ${row('Charged per first visit', (m,p)=>eur(p.minVisit))}
+        ${row('Revenue, treatments plus first visits', m=>eur(m.revenue))}
+        ${row('ROAS on ads alone', m=>mult(m.roasAds))}
+        ${row('Our fee', m=>eur(m.fee))}
+        ${row('Clinic all-in ROAS', m=>`${mult(m.blended)} ${pill(fairness(m.blended))}`)}
+        ${row('Clinic profit on our patients', m=>eur(m.clinicNet))}
+        ${row('Highest fair commission (3x)', m=>m.maxComm3<=0?'0%':pct1(Math.min(1,m.maxComm3)))}
+        ${row('Our contribution per clinic', m=>eur(m.contrib))}
+        ${row('Clinic lifetime value to us', m=>eur(m.ltv))}
+        <tr class="total"><td>Month 12 active clinics</td>${pr.map(r=>`<td class="num">${num1(r[11].active)}</td>`).join('')}</tr>
+        <tr class="total"><td>Month 12 net per month</td>${pr.map(r=>`<td class="num ${r[11].net<0?'neg':''}">${eur(r[11].net)}</td>`).join('')}</tr>
+        <tr class="total"><td>Year one cumulative net</td>${pr.map(r=>`<td class="num ${r[11].cum<0?'neg':''}">${eur(r[11].cum)}</td>`).join('')}</tr>
+      </tbody>`;
+  }
+
+  function renderReco(){
+    const c = calc(Object.assign({}, P, PRESETS.conservative)), b = calc(Object.assign({}, P, PRESETS.base)), a = calc(Object.assign({}, P, PRESETS.aggressive));
+    const pure = k => calc(Object.assign({}, P, PRESETS[k], {retainer:0, perLead:0, perShow:0, comm:0.12}));
+    document.getElementById('reco').innerHTML = `
+      <div class="callout"><strong>Lead with a floor plus upside: a setup fee, a retainer around 750 euros, and 10% of proven treatment revenue, with the clinic paying Meta directly.</strong> Open at 10%, hold at 8% for a clinic with proof of a lower case value, go to 12 to 15% for dental tourism packages and All-on-4 clinics where the case values run past 8,000.</div>
+      <p>Pure commission looks clean but does not pay on a slow clinic. At 12% with no floor, a conservative clinic pays us ${eur(pure('conservative').fee)} a month, a base one ${eur(pure('base').fee)}, an aggressive one ${eur(pure('aggressive').fee)}. The first number does not cover the Sofia seat. Since we cannot tell which of the three a clinic will be until 60 days in, we need the floor.</p>
+      <p>With the floor and 10% the same three clinics pay ${eur(c.fee)}, ${eur(b.fee)} and ${eur(a.fee)}. All three keep us above cost. The clinic sits at ${mult(c.blended)}, ${mult(b.blended)} and ${mult(a.blended)} all in. The conservative one is tight, which is the honest signal that on a clinic like that we should push booking rate before we push price.</p>
+      <p>The fairness test to say out loud on the sales call: "You pay Meta. You pay us a floor that covers our time and a slice of the treatment revenue we can prove came from us. All in, if you are not keeping at least 3 euros for every euro out after 90 days, we cut the commission until you are, or we stop." That sentence closes better than any deck, because it says we lose too when it does not work.</p>
+      <p>The commission ceiling is set by the clinic's margin, not by our appetite. At a 50% gross margin and marketing at a third of revenue, the owner still nets roughly 17% on our patients before overhead, on patients they would not otherwise have had. Past a third they start to feel like they work for us. The heatmap above shows where each treatment value crosses that line.</p>
+      <p>How this stacks up per clinic for us: ${eur(b.contrib)} a month of contribution in the base case, ${eur(a.contrib)} in a good clinic. Ten billing clinics in the base case is around ${eurK(b.contrib*10 - P.fixed)} a month before founder pay, with one and a half Sofia seats already paid for inside that number. Twenty clinics is the business.</p>
+      <h3>What to do next</h3>
+      <ul>
+        <li>Sign two pilot clinics at the floor plus 10%, one in an English-speaking market and one dental tourism clinic. Different case values, same funnel.</li>
+        <li>Run instant forms and the landing page funnel side by side for 30 days in each. Then replace the cost per lead and booking rate sliders with what you measured.</li>
+        <li>Hire the Sofia media buyer when clinic three signs, not before. Until then the two of you run the accounts.</li>
+        <li>After 90 days, take the real all-in ROAS to the next ten sales calls. A real 4x from a named clinic is the whole pitch.</li>
+      </ul>`;
+  }
+
+  function render(){
+    syncControls();
+    const m = calc(P);
+    const rows = project(P, m);
+    renderKpis(m); renderFunnel(m); renderSplit(m); renderUnit(m); renderAgency(m, rows);
+    columnChart(document.getElementById('c-clinics'), rows);
+    lineChart(document.getElementById('c-profit'), rows);
+    renderHeat(m); renderStructures(m); renderCompare(); renderReco();
+  }
+
+  buildControls();
+  document.querySelectorAll('[data-hm]').forEach(x => x.setAttribute('aria-pressed', x.dataset.hm===hmMetric?'true':'false'));
+  render();
+})();
+</script>
+</body>
+</html>
